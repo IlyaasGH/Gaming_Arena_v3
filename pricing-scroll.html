@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Controlled Card Scroll</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0e0e0e;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      overflow: hidden; /* Stop default scroll */
+      height: 100vh;
+    }
+
+    .sec-scroll {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      background: #0e0e0e;
+    }
+
+    .pricecontainer {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .pricecard {
+      position: absolute;
+      width: 90%;
+      max-width: 700px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: translateY(80px);
+      transition: opacity 1s ease, transform 1s ease;
+      text-align: center;
+    }
+
+    .pricecard h2 {
+      font-size: 2rem;
+      color: #ffcc00;
+      margin-bottom: 1rem;
+    }
+
+    .pricecard p {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .pricecard.active {
+      opacity: 1;
+      transform: translateY(0);
+      z-index: 10;
+    }
+
+    .pricecard.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scrollable Card Section -->
+  <section class="sec-scroll">
+    <div class="pricecontainer">
+      <div class="pricecard active">
+        <h2>🎮 PS5 Room</h2>
+        <p>LKR 400/hour — Private room for FIFA, COD, and more.</p>
+      </div>
+      <div class="pricecard hidden">
+        <h2>🕶️ VR Room</h2>
+        <p>LKR 700/hour — Fully immersive gaming with VR headsets.</p>
+      </div>
+      <div class="pricecard hidden">
+        <h2>🖥️ Gaming PCs</h2>
+        <p>LKR 300/hour — RTX, 240Hz monitors, esports-ready setup.</p>
+      </div>
+      <div class="pricecard hidden">
+        <h2>🎱 Pool Table</h2>
+        <p>LKR 250/hour — Relax with friends, chalk included!</p>
+      </div>
+      <div class="pricecard hidden">
+        <h2>🏅 Membership</h2>
+        <p>LKR 3000/month — 10 free hours + tournament access.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const cards = document.querySelectorAll(".pricecard");
+    let index = 0;
+    let scrolling = false;
+
+    function showCard(i) {
+      cards.forEach((card, j) => {
+        if (j === i) {
+          card.classList.add("active");
+          card.classList.remove("hidden");
+        } else {
+          card.classList.remove("active");
+          card.classList.add("hidden");
+        }
+      });
+    }
+
+    function nextCard() {
+      if (index < cards.length - 1) {
+        index++;
+        showCard(index);
+      }
+    }
+
+    function prevCard() {
+      if (index > 0) {
+        index--;
+        showCard(index);
+      }
+    }
+
+    function handleScroll(e) {
+      if (scrolling) return;
+      scrolling = true;
+
+      if (e.deltaY > 0) {
+        nextCard();
+      } else {
+        prevCard();
+      }
+
+      setTimeout(() => scrolling = false, 1500);
+    }
+
+    window.addEventListener("wheel", handleScroll);
+    window.addEventListener("keydown", (e) => {
+      if (scrolling) return;
+
+      if (e.key === "ArrowDown") {
+        nextCard();
+        scrolling = true;
+      } else if (e.key === "ArrowUp") {
+        prevCard();
+        scrolling = true;
+      }
+
+      setTimeout(() => scrolling = false, 1500);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Parallax Website Background</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      font-family: sans-serif;
+    }
+    .parallax {
+      position: relative;
+      height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      perspective: 1px;
+      perspective-origin: top;
+    }
+    .layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    /* Image Order: img → clouds → sun → building → sea → goku → ground */
+    .layer.img       { background-image: url('image/0006_img.png'); transform: translateZ(-6px) scale(7); z-index: 1; }
+    .layer.clouds    { background-image: url('image/0004_cloud.png'); transform: translateZ(-5px) scale(6); z-index: 2; }
+    .layer.sun       { background-image: url('image/0005_sun.png'); transform: translateZ(-4px) scale(5); z-index: 3; }
+    .layer.building  { background-image: url('image/0002_building.png'); transform: translateZ(-3px) scale(4); z-index: 4; }
+    .layer.sea       { background-image: url('image/0003_sea.png'); transform: translateZ(-2px) scale(3); z-index: 5; }
+    .layer.goku      { background-image: url('image/0001_Goku.png'); transform: translateZ(-1px) scale(2); z-index: 6; }
+    .layer.ground    { background-image: url('image/0000_ground.png'); transform: translateZ(0); z-index: 7; }
+    .content {
+      position: relative;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="parallax">
+    <div class="layer img"></div>
+    <div class="layer clouds"></div>
+    <div class="layer sun"></div>
+    <div class="layer building"></div>
+    <div class="layer sea"></div>
+    <div class="layer goku"></div>
+    <div class="layer ground"></div>
+    <div class="content">
+      <h1>Parallax Gaming Arena</h1>
+      <p>Scroll to feel the depth.</p>
+    </div>
+  </div>
+</body>
+</html>

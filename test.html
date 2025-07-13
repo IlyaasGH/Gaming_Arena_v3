@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gaming Arena Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <style>
+    body {
+      background-color: #0b0c10;
+      color: #66fcf1;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1.flicker-title {
+      font-size: 3em;
+      margin-top: 40px;
+      color: #66fcf1;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+
+    .section {
+      margin: 40px auto;
+      max-width: 800px;
+      padding: 20px;
+    }
+
+    .glow-button {
+      background-color: #1f2833;
+      border: 2px solid #45a29e;
+      color: #66fcf1;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 20px;
+      transition: 0.3s ease;
+    }
+
+    .station {
+      display: inline-block;
+      width: 80px;
+      height: 80px;
+      margin: 10px;
+      border-radius: 10px;
+      background-color: #1f2833;
+      border: 2px solid #66fcf1;
+      line-height: 80px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .station.selected {
+      background-color: #45a29e;
+      color: #0b0c10;
+    }
+
+    .explosion-circle {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, #f00, transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      display: none;
+      z-index: 999;
+    }
+
+    .progress-container {
+      width: 80%;
+      height: 20px;
+      background-color: #222;
+      margin: 30px auto;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #66fcf1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="flicker-title">Gaming Arena Booking</h1>
+
+  <div class="section">
+    <button class="glow-button" onclick="startBooking()">Start Booking</button>
+    <div class="stations">
+      <div class="station" data-id="A1" onclick="selectStation(this)">A1</div>
+      <div class="station" data-id="A2" onclick="selectStation(this)">A2</div>
+      <div class="station" data-id="A3" onclick="selectStation(this)">A3</div>
+      <div class="station" data-id="B1" onclick="selectStation(this)">B1</div>
+      <div class="station" data-id="B2" onclick="selectStation(this)">B2</div>
+      <div class="station" data-id="B3" onclick="selectStation(this)">B3</div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="explosion-circle" id="explosion"></div>
+
+  <!-- Sound -->
+  <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/10/30/audio_7fda1d40b1.mp3"></audio>
+
+  <script>
+    // Flicker animation
+    anime({
+      targets: '.flicker-title',
+      opacity: [
+        { value: 0.5, duration: 100 },
+        { value: 1, duration: 100 },
+        { value: 0.7, duration: 80 },
+        { value: 1, duration: 100 },
+      ],
+      easing: 'linear',
+      loop: true
+    });
+
+    anime({
+      targets: '.glow-button',
+      scale: [1, 1.05],
+      easing: 'easeInOutSine',
+      direction: 'alternate',
+      loop: true,
+      duration: 1000
+    });
+
+    anime({
+      targets: '.section',
+      translateY: [100, 0],
+      opacity: [0, 1],
+      easing: 'easeOutQuad',
+      duration: 1200
+    });
+
+    const clickSound = document.getElementById('clickSound');
+
+    function selectStation(el) {
+      const stationId = el.getAttribute('data-id');
+
+      el.classList.toggle("selected");
+      clickSound.play();
+
+      anime({
+        targets: el,
+        scale: [1, 1.2, 1],
+        duration: 500,
+        easing: 'easeOutElastic(1, .5)'
+      });
+
+      showExplosion(event.pageX, event.pageY);
+
+      // Send to backend
+      if (el.classList.contains("selected")) {
+        const formData = new FormData();
+        formData.append("station", stationId);
+
+        fetch("booking_handler.php", {
+          method: "POST",
+          body: formData
+        })
+        .then(res => res.text())
+        .then(data => {
+          console.log("Booking result:", data);
+        })
+        .catch(err => console.error("Error booking station:", err));
+      }
+    }
+
+    function showExplosion(x, y) {
+      const explosion = document.getElementById("explosion");
+      explosion.style.left = (x - 25) + "px";
+      explosion.style.top = (y - 25) + "px";
+      explosion.style.display = "block";
+
+      anime({
+        targets: explosion,
+        scale: [0, 3],
+        opacity: [1, 0],
+        duration: 600,
+        easing: "easeOutExpo",
+        complete: () => {
+          explosion.style.display = "none";
+        }
+      });
+    }
+
+    function startBooking() {
+      anime({
+        targets: '.progress-bar',
+        width: ['0%', '100%'],
+        easing: 'easeInOutQuart',
+        duration: 3000
+      });
+    }
+  </script>
+
+</body>
+</html>
